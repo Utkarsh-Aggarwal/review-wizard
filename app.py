@@ -1,8 +1,10 @@
 from flask import Flask, request, render_template
 import requests
 from bs4 import BeautifulSoup
-import nltk
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
+
+import nltk
+nltk.download('vader_lexicon')
 
 # Initialize the Flask application
 app = Flask(__name__)
