@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Review Analysis Dashboard</title>
+  <style>
+    :root {
+      --primary: #4361ee;
+      --positive: #4cc9f0;
+      --negative: #f72585;
+      --background: #f8f9fa;
+      --card-bg: #ffffff;
+      --text: #333333;
+      --border-radius: 8px;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background-color: var(--background);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    header {
+      background: linear-gradient(to right, #3a0ca3, #4361ee);
+      color: white;
+      padding: 25px;
+      border-radius: var(--border-radius);
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 5px;
+    }
+    
+    .subtitle {
+      opacity: 0.9;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .stat-card {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: var(--border-radius);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .stat-card h3 {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 5px;
+    }
+    
+    .stat-card .value {
+      font-size: 2rem;
+      font-weight: bold;
+    }
+    
+    .positive {
+      color: var(--positive);
+    }
+    
+    .negative {
+      color: var(--negative);
+    }
+    
+    .review-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .review-section {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: var(--border-radius);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .review-section h2 {
+      font-size: 1.3rem;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .pros h2 {
+      color: var(--positive);
+    }
+    
+    .cons h2 {
+      color: var(--negative);
+    }
+    
+    .review-list {
+      margin-bottom: 15px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    
+    .review-item {
+      padding: 10px;
+      margin-bottom: 10px;
+      background: var(--background);
+      border-radius: 4px;
+    }
+    
+    .pros .review-item {
+      border-left: 3px solid var(--positive);
+    }
+    
+    .cons .review-item {
+      border-left: 3px solid var(--negative);
+    }
+    
+    .example-review {
+      margin-top: 20px;
+      padding: 15px;
+      background: rgba(67, 97, 238, 0.05);
+      border-radius: 4px;
+    }
+    
+    .example-title {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .button {
+      display: inline-block;
+      background: var(--primary);
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: var(--border-radius);
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    
+    .button:hover {
+      background: #3a0ca3;
+    }
+    
+    footer {
+      margin-top: 30px;
+      text-align: center;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Review Analysis Results</h1>
+      <p class="subtitle">Sentiment analysis from customer feedback</p>
+    </header>
+    
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3>Total Reviews</h3>
+        <div class="value">{{ total_reviews }}</div>
+      </div>
+      
+      <div class="stat-card">
+        <h3>Positive Reviews</h3>
+        <div class="value positive">{{ pos_count }}</div>
+      </div>
+      
+      <div class="stat-card">
+        <h3>Negative Reviews</h3>
+        <div class="value negative">{{ neg_count }}</div>
+      </div>
+    </div>
+    
+    <div class="review-grid">
+      <div class="review-section pros">
+        <h2>👍 Pros</h2>
+        <div class="review-list">
+          {% for review in pros %}
+            <div class="review-item">{{ review }}</div>
+          {% endfor %}
+        </div>
+        <div class="example-review">
+          <div class="example-title">Example Positive Review:</div>
+          {{ example_pro }}
+        </div>
+      </div>
+      
+      <div class="review-section cons">
+        <h2>👎 Cons</h2>
+        <div class="review-list">
+          {% for review in cons %}
+            <div class="review-item">{{ review }}</div>
+          {% endfor %}
+        </div>
+        <div class="example-review">
+          <div class="example-title">Example Negative Review:</div>
+          {{ example_con }}
+        </div>
+      </div>
+    </div>
+    
+    <a href="/" class="button">Analyze Another URL</a>
+    
+    <footer>
+      <p>© 2025 Review Analysis Tool</p>
+    </footer>
+  </div>
+</body>
+</html>

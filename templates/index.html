@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Review Analysis App</title>
+  <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+  <!-- Add modern font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Basic styles for demonstration -->
+  <style>
+    :root {
+      --primary-color: #6366f1;
+      --gradient-start: #8b5cf6;
+      --gradient-end: #3b82f6;
+      --accent-color: #f472b6;
+      --secondary-accent: #10b981;
+      --success-color: #4cc9f0;
+      --background-color: #f0f4f8;
+      --card-bg: #ffffff;
+      --text-color: #334155;
+      --card-shadow: 0 10px 25px rgba(99, 102, 241, 0.15);
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      line-height: 1.6;
+      color: var(--text-color);
+      background-color: var(--background-color);
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 20%),
+        radial-gradient(circle at 50% 50%, rgba(244, 114, 182, 0.05) 0%, transparent 30%);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .container {
+      width: 90%;
+      max-width: 850px;
+      padding: 2.5rem;
+      background-color: var(--card-bg);
+      border-radius: 24px;
+      box-shadow: var(--card-shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .container::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 8px;
+      background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+    }
+    
+    .decorative-circle {
+      position: absolute;
+      border-radius: 50%;
+      z-index: 0;
+    }
+    
+    .circle-1 {
+      width: 120px;
+      height: 120px;
+      top: -40px;
+      right: -40px;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(99, 102, 241, 0.05));
+    }
+    
+    .circle-2 {
+      width: 80px;
+      height: 80px;
+      bottom: 20px;
+      left: -20px;
+      background: linear-gradient(135deg, rgba(244, 114, 182, 0.1), rgba(244, 114, 182, 0.05));
+    }
+    
+    h1 {
+      background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-align: center;
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+      font-size: 2.5rem;
+      position: relative;
+    }
+    
+    .page-icon {
+      font-size: 2rem;
+      text-align: center;
+      margin-bottom: 1rem;
+      color: var(--accent-color);
+    }
+    
+    .description {
+      text-align: center;
+      margin-bottom: 2rem;
+      color: #64748b;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .input-group {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .input-group label {
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #475569;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .label-icon {
+      color: var(--primary-color);
+    }
+    
+    .input-group input {
+      padding: 1rem 1.5rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background-color: #f8fafc;
+    }
+    
+    .input-group input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+      background-color: white;
+    }
+    
+    .options-container {
+      background: linear-gradient(to right, rgba(99, 102, 241, 0.05), rgba(59, 130, 246, 0.05));
+      padding: 1.5rem;
+      border-radius: 16px;
+      margin-bottom: 1rem;
+    }
+    
+    .options-title {
+      font-weight: 600;
+      color: #475569;
+      margin-top: 0;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .options {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    
+    .option-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .option-toggle:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+    }
+    
+    .option-toggle input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #cbd5e1;
+      border-radius: 6px;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .option-toggle input[type="checkbox"]:checked {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+    
+    .option-toggle input[type="checkbox"]:checked::after {
+      content: "✓";
+      position: absolute;
+      color: white;
+      font-size: 14px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    
+    .option-toggle:nth-child(1) input[type="checkbox"]:checked {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+    
+    .option-toggle:nth-child(2) input[type="checkbox"]:checked {
+      background-color: var(--accent-color);
+      border-color: var(--accent-color);
+    }
+    
+    .option-toggle:nth-child(3) input[type="checkbox"]:checked {
+      background-color: var(--secondary-accent);
+      border-color: var(--secondary-accent);
+    }
+    
+    .option-toggle label {
+      cursor: pointer;
+      font-weight: 500;
+    }
+    
+    button {
+      background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      font-size: 1.125rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    button::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: all 0.5s ease;
+    }
+    
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+    }
+    
+    button:hover::before {
+      left: 100%;
+    }
+    
+    .loading {
+      display: none;
+      text-align: center;
+      margin-top: 1.5rem;
+    }
+    
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(99, 102, 241, 0.1);
+      border-radius: 50%;
+      border-left-color: var(--primary-color);
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    
+    .example-urls {
+      margin-top: 2.5rem;
+      background: linear-gradient(to right, rgba(244, 114, 182, 0.05), rgba(16, 185, 129, 0.05));
+      padding: 1.5rem;
+      border-radius: 16px;
+      position: relative;
+    }
+    
+    .example-urls h3 {
+      margin-top: 0;
+      font-size: 1.1rem;
+      color: #475569;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .example-icon {
+      color: var(--accent-color);
+    }
+    
+    .example-urls ul {
+      padding-left: 1.5rem;
+      margin-bottom: 0;
+    }
+    
+    .example-urls li {
+      padding: 0.5rem 0;
+      position: relative;
+    }
+    
+    .example-urls li::before {
+      content: "→";
+      position: absolute;
+      left: -1.25rem;
+      color: var(--accent-color);
+    }
+    
+    .footer {
+      margin-top: 2.5rem;
+      text-align: center;
+      font-size: 0.875rem;
+      color: #64748b;
+      position: relative;
+    }
+    
+    .footer::before {
+      content: "";
+      display: block;
+      height: 1px;
+      width: 80px;
+      background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+      margin: 0 auto 1rem;
+    }
+    
+    @media (max-width: 600px) {
+      .container {
+        padding: 1.5rem;
+      }
+      
+      h1 {
+        font-size: 1.75rem;
+      }
+      
+      .options {
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="decorative-circle circle-1"></div>
+    <div class="decorative-circle circle-2"></div>
+    
+    <div class="page-icon">⭐</div>
+    <h1>Review Wizard</h1>
+    <p class="description">Transform product reviews into actionable insights with AI-powered analysis. Just enter a URL and unlock what customers are really saying.</p>
+    
+    <form method="POST" action="/analyze" id="analysisForm">
+      <div class="input-group">
+        <label for="url"><span class="label-icon">🔗</span> Product Page URL:</label>
+        <input type="url" name="url" id="url" placeholder="https://www.example.com/product/12345" required>
+      </div>
+      
+      <div class="options-container">
+        <h3 class="options-title"><span class="label-icon">⚙️</span> Analysis Options</h3>
+        <div class="options">
+          <div class="option-toggle">
+            <input type="checkbox" id="sentiment" name="options" value="sentiment" checked>
+            <label for="sentiment">Sentiment Analysis</label>
+          </div>
+          <div class="option-toggle">
+            <input type="checkbox" id="keywords" name="options" value="keywords" checked>
+            <label for="keywords">Key Phrases</label>
+          </div>
+          <div class="option-toggle">
+            <input type="checkbox" id="summary" name="options" value="summary" checked>
+            <label for="summary">Smart Summary</label>
+          </div>
+        </div>
+      </div>
+      
+      <button type="submit" id="analyzeButton">✨ Analyze Reviews</button>
+      
+      <div class="loading" id="loadingIndicator">
+        <div class="spinner"></div>
+        <p>Analyzing reviews. Working our magic...</p>
+      </div>
+    </form>
+    
+    <div class="example-urls">
+      <h3><span class="example-icon">💡</span> Example URLs to try:</h3>
+      <ul>
+        <li>Amazon product pages (electronics, books, appliances)</li>
+        <li>Yelp business pages (restaurants, services)</li>
+        <li>TripAdvisor hotel or restaurant pages</li>
+      </ul>
+    </div>
+    
+    <div class="footer">
+      <p>© 2025 Review Wizard | Making sense of customer feedback</p>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('analysisForm').addEventListener('submit', function() {
+      document.getElementById('analyzeButton').disabled = true;
+      document.getElementById('loadingIndicator').style.display = 'block';
+    });
+  </script>
+</body>
+</html>
